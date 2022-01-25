@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Posts!{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+
+    <div class="example-wrapper">
+        <h1>Hello Les Posts! ✅</h1>
+        {% for message in app.flashes('notice') %}
+            <div class="flash-notice alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col-md-12">
+                <form>
+                    <label>
+                        Nom
+                        <input name="nom" type="text" value="{{ params.nom ?? null }}">
+                    </label>
+                    <label>
+                        Auteur
+                        <input name="auteur" type="text" value="{{ params.auteur ?? null }}">
+                    </label>
+                    <label>
+                        Date
+                        <input name="date" type="date" value="{{ params.date ?? null }}">
+                    </label>
+                    <label>
+                        Has Comment
+                        <input name="hasComment" type="checkbox" value="1" {{ params.hasComment is defined  ? 'checked' : '' }}>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+                <a href="{{ path('post_export', params) }}" class="btn btn-warning">Export Excel</a>
+                <a href="{{ path('hello_world_export_excel') }}" class="btn btn-warning">Export Excel ALL</a>
+            </div>
+        </div>
+        <table class="table">
+            <tr>
+                <th>Nom</th>
+                <th>Contenu</th>
+                <th>Auteur</th>
+                <th>Commentaires</th>
+                <th>Date de création</th>
+                <th>Date de modification</th>
+                <th>Action</th>
+            </tr>
+            <tbody>
+
+            {% for post in posts %}
+                <tr>
+                    <td>{{ post.name }}</td>
+                    <td>{{ post.content }}</td>
+                    <td>{{ post.user.email ?? 'pas d\'utilisateur' }}</td>
+                    <td>
+                        {% for comment in post.comments %}
+                            {{ comment.content }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ post.createdAt|date('d-m-Y h:i:s') }}</td>
+                    <td>{{ post.updatedAt|date('d-m-Y h:i:s') }}</td>
+                    <td>
+                        <a href="{{ path('post_show', {id:post.id}) }}">Voir</a>
+                    </td>
+                </tr>
+            {% else %}
+                pas de posts
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

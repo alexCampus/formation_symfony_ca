@@ -1,0 +1,35 @@
+App\Entity\Post:
+    attributes:
+        normalization_context:
+            groups: [ 'post_read' ]
+        denormalization_context:
+            groups: [ 'post_write' ]
+    itemOperations: [ 'get', 'delete', 'put', 'patch' ]
+    collectionOperations:
+        get:
+            method: GET
+        post:
+            method: POST
+        post_excel:
+            route_name: 'api_export_post'
+            openapi_context:
+                summary: 'Export Excel des posts'
+                description: '# Pop a great rabbit picture by color!\n\n![A great rabbit](https://rabbit.org/graphics/fun/netbunnies/jellybean1-brennan1.jpg)'
+#                parameters: [
+#                    [
+#                        name: 'nom',
+#                        in: 'query',
+#                        description: 'Nom du post',
+#                        required: false,
+#                        type: text,
+#                    ]
+#                ]
+
+
+#        post:
+#            method: 'POST'
+#            path: '/auth'
+#            controller: App\Controller\AuthController
+#            swagger_context:
+#                summary: your desc
+#                description: your desc

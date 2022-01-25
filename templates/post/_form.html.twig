@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+
+<div class="col-md-12">
+    {{ form_row(form.imageName) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.content) }}
+    {{ form_row(form.tags) }}
+</div>
+<button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}

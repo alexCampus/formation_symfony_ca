@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post {{ post.id }}!{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+
+    <div class="example-wrapper">
+        <h1>Hello Les Posts! ✅</h1>
+        {% if post.imageName %}
+            <img src="{{ asset('/uploads/post_img/' ~ post.imageName) }}" height="150" width="150">
+        {% endif %}
+        <table class="table">
+            <tr>
+                <th>Nom</th>
+                <th>Contenu</th>
+                <th>Date de création</th>
+                <th>Date de modification</th>
+                <th>Auteur</th>
+            </tr>
+            <tbody>
+            <tr>
+                <td>{{ post.name }}</td>
+                <td>{{ post.content }}</td>
+                <td>{{ post.createdAt|date('d-m-Y h:i:s') }}</td>
+                <td>{{ post.updatedAt|date('d-m-Y h:i:s') }}</td>
+                <td>{{ post.user.email }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        {% if is_granted('POST_EDIT', post) %}
+            <a href="{{ path('post_edit', {id:post.id}) }}" class="btn btn-primary">Edit</a>
+        {% endif %}
+
+        {% if is_granted('POST_DELETE', post) %}
+            {% include 'post/_delete.html.twig' %}
+        {% endif %}
+
+
+        <div class="card">
+            <div class="card-body">
+                {% for comment in post.comments %}
+                    {{ comment.content }}<br>
+                    {{ comment.user.email }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        {% if form != null %}
+            {{ form_start(form) }}
+            {{ form_row(form.content) }}
+            <button class="btn btn-primary">Save</button>
+
+            {{ form_end(form) }}
+        {% endif %}
+    </div>
+{% endblock %}
