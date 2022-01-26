@@ -81,11 +81,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $lastName;
 
+    /**
+     * @Groups({"user:read"})
+     * @ORM\ManyToMany(targetEntity=Post::class, mappedBy="userLikes")
+     */
+    private $postLikes;
+
     public function __construct()
     {
-        $this->posts    = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->tags     = new ArrayCollection();
+        $this->posts     = new ArrayCollection();
+        $this->comments  = new ArrayCollection();
+        $this->tags      = new ArrayCollection();
+        $this->postLikes = new ArrayCollection();
     }
 
     public function __toString()
@@ -292,6 +299,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getPostLikes(): Collection
+    {
+        return $this->postLikes;
+    }
+
+    public function addPostLike(Post $postLike): self
+    {
+        if (!$this->postLikes->contains($postLike)) {
+            $this->postLikes[] = $postLike;
+            $postLike->addPostLike($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostLike(Post $postLike): self
+    {
+        if ($this->postLikes->removeElement($postLike)) {
+            $postLike->removePostLike($this);
+        }
 
         return $this;
     }

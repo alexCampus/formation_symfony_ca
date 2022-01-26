@@ -109,12 +109,19 @@ class Post
      */
     private $user;
 
+    /**
+     * @Groups("post:read")
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="postLikes")
+     */
+    private $userLikes;
+
     public function __construct()
     {
 //        $this->setCreatedAt(new \DateTimeImmutable());
 //        $this->setUpdatedAt(new \DateTimeImmutable());
-        $this->comments = new ArrayCollection();
-        $this->tags     = new ArrayCollection();
+        $this->comments  = new ArrayCollection();
+        $this->tags      = new ArrayCollection();
+        $this->userLikes = new ArrayCollection();
     }
 
     public function __toString()
@@ -262,6 +269,30 @@ class Post
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUserLikes(): Collection
+    {
+        return $this->userLikes;
+    }
+
+    public function addPostLike(User $postLike): self
+    {
+        if (!$this->userLikes->contains($postLike)) {
+            $this->userLikes[] = $postLike;
+        }
+
+        return $this;
+    }
+
+    public function removePostLike(User $postLike): self
+    {
+        $this->userLikes->removeElement($postLike);
 
         return $this;
     }

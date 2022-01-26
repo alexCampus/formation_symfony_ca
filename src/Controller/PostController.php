@@ -35,15 +35,6 @@ class PostController extends AbstractController
      */
     public function index(PostRepository $postRepository, Request $request): Response
     {
-//        $data = $postRepository->search($request->query->all());
-//        $json = [];
-//        foreach ($data as $key => $datum) {
-//            $json[$key]['name']    = $datum->getName();
-//            $json[$key]['content'] = $datum->getContent();
-//        }
-//
-//        return new JsonResponse($json);
-
         $posts = $postRepository->search($request->query->all());
 
         return $this->render('post/index.html.twig', [
@@ -165,5 +156,35 @@ class PostController extends AbstractController
         $exportExcel->generate($request->query->all());
 
         return $this->redirectToRoute('post_list', $request->query->all());
+    }
+
+    /**
+     * @Route("/set-like/{id}", name="set_like", requirements={"id" = "\d+"})
+     * @param Request $request
+     * @param Post $post
+     */
+    public function setLike(Request $request, Post $post, EntityManagerInterface $em)
+    {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            if ($request->query->get('like') === '1') {
+                $post->addPostLike($this->getUser());
+            } elseif ($request->query->get('like') === '0') {
+                $post->removePostLike($this->getUser());
+            }
+
+            $em->flush();
+            $this->addFlash(
+                'notice',
+                'Merci pour le like'
+            );
+        } else {
+            $this->addFlash(
+                'notice',
+                'Vous devez être auth pour like'
+            );
+        }
+
+        return $this->redirectToRoute('post_list');
+
     }
 }
